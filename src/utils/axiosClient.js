@@ -1,7 +1,14 @@
 import axios from "axios";
 
+// Automatically checks if Vite is building for production
+const isProduction = import.meta.env.PROD;
+
+const dynamicBaseURL = isProduction 
+  ? "https://iblog-backend-m7e6.onrender.com" 
+  : "http://localhost:4000";
+
 const userAxios = axios.create({
-  baseURL: "http://localhost:4000",
+  baseURL: dynamicBaseURL,
 });
 
 userAxios.interceptors.request.use((config) => {

@@ -3,8 +3,7 @@
 import { create } from "zustand";
 import axios from "axios";
 
-// 👇 FIX: Use environment variable for the API base URL
-const API = import.meta.env.VITE_API_URL || "http://localhost:4000";
+const API = "https://iblog-backend-m7e6.onrender.com";
 
 export const useBlogStore = create((set) => ({
 
@@ -27,7 +26,7 @@ export const useBlogStore = create((set) => ({
         title: b.title,
         description: b.description || b.short_description,
         
-        // Capture both possible field names from backend
+        // 👇 FIX: Capture both possible field names from backend
         category: b.category || b.category_id, 
         category_id: b.category_id || b.category,
 
@@ -63,7 +62,7 @@ export const useBlogStore = create((set) => ({
         description: b.description,
         content: b.content || "",
         
-        // Capture both
+        // 👇 FIX: Capture both
         category: b.category || b.category_id,
         category_id: b.category_id || b.category,
 
@@ -104,7 +103,7 @@ export const useBlogStore = create((set) => ({
         title: b.title,
         description: b.description,
         
-        // Capture both
+        // 👇 FIX: Capture both
         category: b.category || b.category_id,
         category_id: b.category_id || b.category,
 
