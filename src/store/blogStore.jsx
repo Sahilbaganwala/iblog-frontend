@@ -3,7 +3,11 @@
 import { create } from "zustand";
 import axios from "axios";
 
-const API = "https://iblog-backend-m7e6.onrender.com";
+// 👇 FIX 1: The Smart Switch. Detects if running on Render (Live) or PC (Local)
+const isProduction = import.meta.env.PROD;
+const API = isProduction 
+  ? "https://iblog-backend-m7e6.onrender.com" 
+  : "http://localhost:4000";
 
 export const useBlogStore = create((set) => ({
 
@@ -19,20 +23,19 @@ export const useBlogStore = create((set) => ({
     try {
       set({ loading: true });
 
-      const res = await axios.get(`${API}/blogs`);
+      // 👇 FIX 2: Added ?t=${Date.now()} to bypass the Ghost Cache
+      const res = await axios.get(`${API}/blogs?t=${Date.now()}`);
 
       const mappedBlogs = res.data.map((b) => ({
         _id: b._id,
         title: b.title,
         description: b.description || b.short_description,
-        
-        // 👇 FIX: Capture both possible field names from backend
         category: b.category || b.category_id, 
         category_id: b.category_id || b.category,
-
         author: b.author,
+        // 👇 FIX 3: Dynamic image mapping that prevents double slashes
         image: b.image
-          ? `${API}${b.image}`
+          ? `${API}/${b.image.replace(/^\//, "")}`
           : "https://placehold.co/1200x800?text=No+Image",
         raw: b
       }));
@@ -53,7 +56,7 @@ export const useBlogStore = create((set) => ({
     try {
       set({ loading: true });
 
-      const res = await axios.get(`${API}/blogs/${id}`);
+      const res = await axios.get(`${API}/blogs/${id}?t=${Date.now()}`);
       const b = res.data;
 
       const mapped = {
@@ -61,14 +64,11 @@ export const useBlogStore = create((set) => ({
         title: b.title,
         description: b.description,
         content: b.content || "",
-        
-        // 👇 FIX: Capture both
         category: b.category || b.category_id,
         category_id: b.category_id || b.category,
-
         author: b.author,
         image: b.image
-          ? `${API}${b.image}`
+          ? `${API}/${b.image.replace(/^\//, "")}`
           : "https://placehold.co/1200x800?text=No+Image",
         raw: b
       };
@@ -92,7 +92,7 @@ export const useBlogStore = create((set) => ({
       set({ loading: true });
       const token = localStorage.getItem("token");
 
-      const res = await axios.get(`${API}/profile/myBlogs`, {
+      const res = await axios.get(`${API}/profile/myBlogs?t=${Date.now()}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -102,14 +102,11 @@ export const useBlogStore = create((set) => ({
         _id: b._id,
         title: b.title,
         description: b.description,
-        
-        // 👇 FIX: Capture both
         category: b.category || b.category_id,
         category_id: b.category_id || b.category,
-
         author: b.author,
         image: b.image
-          ? `${API}${b.image}`
+          ? `${API}/${b.image.replace(/^\//, "")}`
           : "https://placehold.co/1200x800?text=No+Image",
         raw: b
       }));
