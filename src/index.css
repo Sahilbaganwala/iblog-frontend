@@ -1,0 +1,12 @@
+@import "tailwindcss";
+@import "./styles/global.css";
+
+/* Custom global CSS must be after Tailwind import */
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  background-color: #111827; /* same as bg-gray-900 */
+  color: #f3f4f6;           /* same as text-gray-100 */
+}
